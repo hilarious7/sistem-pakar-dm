@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, varchar, text, timestamp, unique } from 'drizzle-orm/pg-core';
 import { penyakit } from './penyakit.schema';
 import { gejala } from './gejala.schema';
 import { faktorRisiko } from './faktor-risiko.schema';
@@ -12,7 +12,9 @@ export const gejalaPenyakit = pgTable('gejala_penyakit', {
   sumber: varchar('sumber', { length: 200 }),
   catatan: text('catatan'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (t) => ({
+  unq: unique('unq_gejala_penyakit').on(t.gejalaId, t.penyakitId),
+}));
 
 /** Relasi many-to-many faktor risiko dan penyakit. */
 export const faktorRisikoPenyakit = pgTable('faktor_risiko_penyakit', {
@@ -23,4 +25,6 @@ export const faktorRisikoPenyakit = pgTable('faktor_risiko_penyakit', {
   sumber: varchar('sumber', { length: 200 }),
   catatan: text('catatan'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (t) => ({
+  unq: unique('unq_faktor_risiko_penyakit').on(t.faktorRisikoId, t.penyakitId),
+}));
