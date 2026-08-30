@@ -22,6 +22,7 @@ export interface HypothesisBelief {
   belief: number;
   plausibility: number;
   ranking: number;
+  nama?: string;
 }
 
 export interface AcuteWarning {

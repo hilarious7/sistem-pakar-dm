@@ -1,5 +1,7 @@
 <script lang="ts">
   import Router from 'svelte-spa-router';
+  import Layout from './components/layout/Layout.svelte';
+  
   import Home from './routes/Home.svelte';
   import Konsultasi from './routes/Konsultasi.svelte';
   import HasilDiagnosis from './routes/HasilDiagnosis.svelte';
@@ -12,16 +14,10 @@
     '/hasil': HasilDiagnosis,
     '/rekomendasi': Rekomendasi,
     '/informasi': Informasi,
+    '*': Home
   };
 </script>
 
-<header>
-  <nav>
-    <a href="#/">Beranda</a>
-    <a href="#/konsultasi">Konsultasi</a>
-    <a href="#/rekomendasi">Rekomendasi</a>
-    <a href="#/informasi">Informasi</a>
-  </nav>
-</header>
-
-<Router {routes} />
+<Layout>
+  <Router {routes} />
+</Layout>
