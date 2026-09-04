@@ -1,47 +1,119 @@
 <script lang="ts">
-  import { push } from 'svelte-spa-router';
+  import { link } from 'svelte-spa-router';
   import Button from '../components/ui/Button.svelte';
   import Card from '../components/ui/Card.svelte';
 </script>
 
-<div class="container" style="padding: 4rem 1rem; text-align: center;">
-  <h1 style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;">
-    Sistem Pakar Diagnosis Diabetes Melitus
-  </h1>
-  <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem auto;">
-    Aplikasi berbasis web menggunakan metode Forward Chaining dan Dempster-Shafer Theory 
-    untuk mendeteksi risiko Diabetes Melitus Tipe 1, Tipe 2, dan Gestasional.
-  </p>
-  
-  <Button variant="primary" onclick={() => push('/konsultasi')} class="start-btn">
-    Mulai Konsultasi (Test UI)
-  </Button>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 4rem; text-align: left;">
-    <Card>
-      <h3>Metode Forward Chaining</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
-        Penyaringan hipotesis awal berdasarkan data gejala yang dimasukkan oleh pengguna.
-      </p>
-    </Card>
-    <Card>
-      <h3>Dempster-Shafer Theory</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
-        Perhitungan probabilitas belief dan plausibility untuk mengakomodasi ketidakpastian.
-      </p>
-    </Card>
-    <Card>
-      <h3>Rekomendasi Gizi</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
-        Menghitung BMI, BMR, dan TEE untuk memberikan rekomendasi distribusi kalori harian.
-      </p>
-    </Card>
+<div class="home">
+  <div class="hero">
+    <div class="container hero-container">
+      <div class="hero-text">
+        <span class="badge">Sistem Pakar Medis</span>
+        <h1>Diagnosis Diabetes Melitus</h1>
+        <p>
+          Deteksi dini Diabetes Melitus Tipe 1, Tipe 2, dan Gestasional dengan pendekatan 
+          Forward Chaining dan Dempster-Shafer Theory. 
+          <strong class="text-danger">Platform ini hanya untuk tujuan penelitian.</strong>
+        </p>
+        <div class="hero-actions">
+          <Button onclick={() => window.location.hash = '#/konsultasi'}>Mulai Konsultasi</Button>
+          <Button variant="outline" onclick={() => window.location.hash = '#/informasi'}>Pelajari Lebih Lanjut</Button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="circle"></div>
+        <div class="card-float">Diagnosis Akurat</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section">
+    <h2 class="text-center mb-6">Metode Analisis</h2>
+    <div class="features">
+      <Card>
+        <h3>Forward Chaining</h3>
+        <p class="text-secondary mt-2">Mesin inferensi yang menelusuri alur gejala pasien secara runut untuk membangun hipotesis awal.</p>
+      </Card>
+      <Card>
+        <h3>Dempster-Shafer Theory</h3>
+        <p class="text-secondary mt-2">Kalkulasi probabilitas untuk memberikan tingkat keyakinan (belief) atas hasil diagnosis yang diberikan.</p>
+      </Card>
+      <Card>
+        <h3>Analisis Gizi Terpadu</h3>
+        <p class="text-secondary mt-2">Menghitung BMI, BMR, dan TEE untuk memberikan rekomendasi asupan kalori secara spesifik.</p>
+      </Card>
+    </div>
   </div>
 </div>
 
 <style>
-  :global(.start-btn) {
-    padding: 0.75rem 2rem !important;
-    font-size: 1.1rem !important;
+  .hero {
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: var(--space-16) 0;
+  }
+  .hero-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+  }
+  .hero-text { flex: 1; }
+  .hero-visual {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 300px;
+  }
+  .badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: var(--radius-badge);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+  }
+  .hero-actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  h1 { font-size: 48px; color: var(--primary-dark); }
+  p { font-size: 18px; color: var(--text-secondary); max-width: 600px; }
+  
+  .circle {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-light), var(--info-light));
+  }
+  .card-float {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    background: white;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-lg);
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .section { padding: var(--space-12) var(--space-4); }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 768px) {
+    .hero-container { flex-direction: column; text-align: center; }
+    h1 { font-size: 36px; }
+    p { font-size: 16px; margin: 0 auto; }
+    .hero-actions { justify-content: center; flex-direction: column; }
+    .hero-visual { display: none; }
   }
 </style>

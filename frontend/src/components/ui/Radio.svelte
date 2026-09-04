@@ -1,39 +1,41 @@
-
 <script lang="ts">
-  let {
-    name,
-    id,
-    label,
-    value,
-    group = $bindable()
-  } = $props<{
-    name: string;
+  let { id, name, label, value, group = $bindable() } = $props<{
     id: string;
+    name?: string;
     label: string;
-    value: any;
-    group: any;
+    value?: any;
+    group?: any;
   }>();
 </script>
 
-<div class="radio-wrapper">
-  <input type="radio" {id} {name} {value} bind:group={group} />
-  <label for={id}>{label}</label>
-</div>
+<label class="radio-label" for={id}>
+  <input type="radio" {id} {name} {value} bind:group class="radio-input" />
+  <span class="radio-text">{label}</span>
+</label>
 
 <style>
-  .radio-wrapper {
-    display: flex;
+  .radio-label {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    cursor: pointer;
+    margin-bottom: var(--space-2);
+    min-height: 44px;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
   }
-  input[type="radio"] {
-    width: 1rem;
-    height: 1rem;
+  .radio-input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary); border-radius: 50%;
     cursor: pointer;
+    flex-shrink: 0;
   }
-  label {
-    font-size: 0.9rem;
-    cursor: pointer;
+  .radio-input:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .radio-text {
+    font-size: 16px;
+    color: var(--text-primary);
   }
 </style>

@@ -1,42 +1,44 @@
-
 <script lang="ts">
   let {
-    label,
-    type = 'text',
+    type = "text",
     id,
-    value = $bindable(),
-    placeholder = '',
-    error = '',
+    name,
+    label,
+    value = $bindable(""),
+    placeholder = "",
     required = false,
+    error = "",
     min,
     max,
     step
   } = $props<{
-    label: string;
     type?: string;
     id: string;
-    value: string | number | undefined;
+    name?: string;
+    label: string;
+    value?: string | number;
     placeholder?: string;
-    error?: string;
     required?: boolean;
-    min?: number;
-    max?: number;
-    step?: string;
+    error?: string;
+    min?: number | string;
+    max?: number | string;
+    step?: number | string;
   }>();
 </script>
 
 <div class="input-group">
-  <label for={id}>{label} {required ? '*' : ''}</label>
-  <input 
-    {id} 
-    {type} 
-    bind:value 
-    {placeholder} 
+  <label for={id} class="label">{label} {#if required}<span class="req">*</span>{/if}</label>
+  <input
+    {type}
+    {id}
+    {name}
+    bind:value
+    {placeholder}
     {required}
     {min}
     {max}
     {step}
-    class:has-error={!!error}
+    class="input {error ? 'has-error' : ''}"
   />
   {#if error}
     <span class="error-text">{error}</span>
@@ -47,32 +49,41 @@
   .input-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
   }
-  label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-    color: var(--text-main);
+  .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
   }
-  input {
-    padding: 0.5rem 0.75rem;
+  .req {
+    color: var(--danger);
+  }
+  .input {
+    height: 46px;
+    padding: 0 var(--space-4);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    font-size: 1rem;
+    border-radius: var(--radius-input);
+    font-size: 16px;
+    font-family: inherit;
     transition: border-color 0.2s;
+    background-color: var(--surface);
+    color: var(--text-primary);
   }
-  input:focus {
+  .input:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 2px var(--primary-light);
   }
-  input.has-error {
+  .input.has-error {
     border-color: var(--danger);
   }
+  .input.has-error:focus {
+    box-shadow: 0 0 0 2px var(--danger-light);
+  }
   .error-text {
-    font-size: 0.75rem;
+    font-size: 12px;
     color: var(--danger);
-    margin-top: 0.25rem;
   }
 </style>

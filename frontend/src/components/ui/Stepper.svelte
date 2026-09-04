@@ -1,83 +1,117 @@
-
 <script lang="ts">
-  let { currentStep, totalSteps, labels = [] } = $props<{
+  let { steps, currentStep } = $props<{
+    steps: { number: number; label: string }[];
     currentStep: number;
-    totalSteps: number;
-    labels?: string[];
   }>();
 </script>
 
-<div class="stepper">
-  {#each Array(totalSteps) as _, i}
-    {@const step = i + 1}
-    <div class="step" class:active={currentStep === step} class:completed={currentStep > step}>
-      <div class="circle">{step}</div>
-      {#if labels[i]}
-        <div class="label">{labels[i]}</div>
-      {/if}
+<div class="stepper-desktop">
+  {#each steps as step, index}
+    <div class="step-item {step.number === currentStep ? 'active' : ''} {step.number < currentStep ? 'completed' : ''}">
+      <div class="step-circle">{step.number}</div>
+      <span class="step-label">{step.label}</span>
     </div>
-    {#if step < totalSteps}
-      <div class="line" class:completed={currentStep > step}></div>
+    {#if index < steps.length - 1}
+      <div class="step-line {step.number < currentStep ? 'completed' : ''}"></div>
     {/if}
   {/each}
 </div>
 
+<div class="stepper-mobile">
+  <div class="mobile-progress">
+    Langkah {currentStep} dari {steps.length}
+  </div>
+  <div class="mobile-bar">
+    <div class="mobile-fill" style="width: {(currentStep / steps.length) * 100}%"></div>
+  </div>
+</div>
+
 <style>
-  .stepper {
+  .stepper-desktop {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
-    width: 100%;
   }
-  .step {
+  .step-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
+    position: relative;
     z-index: 1;
   }
-  .circle {
-    width: 2rem;
-    height: 2rem;
+  .step-circle {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background-color: var(--surface);
-    border: 2px solid var(--border);
+    background-color: var(--surface-muted);
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 14px;
+    border: 2px solid var(--border);
     transition: all 0.3s;
   }
-  .step.active .circle {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
-  .step.completed .circle {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: white;
-  }
-  .label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-align: center;
-    max-width: 80px;
-  }
-  .step.active .label {
-    color: var(--text-main);
+  .step-label {
+    font-size: 12px;
     font-weight: 500;
+    color: var(--text-muted);
   }
-  .line {
+  .step-item.active .step-circle {
+    background-color: var(--primary);
+    color: var(--surface);
+    border-color: var(--primary);
+  }
+  .step-item.active .step-label {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .step-item.completed .step-circle {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary);
+  }
+  .step-line {
     flex: 1;
     height: 2px;
     background-color: var(--border);
-    margin: 0 1rem;
-    margin-top: -1.5rem; /* align with circles */
+    margin: 0 var(--space-2);
+    transform: translateY(-10px);
     transition: background-color 0.3s;
   }
-  .line.completed {
+  .step-line.completed {
     background-color: var(--primary);
+  }
+
+  .stepper-mobile {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .stepper-desktop { display: none; }
+    .stepper-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .mobile-progress {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+    }
+    .mobile-bar {
+      height: 6px;
+      background-color: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mobile-fill {
+      height: 100%;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
   }
 </style>

@@ -1,48 +1,45 @@
-
 <script lang="ts">
-  let {
-    id,
-    label,
-    checked = $bindable(false),
-    value,
-    group = $bindable([]),
-  } = $props<{
+  let { id, label, value, group = $bindable(), checked = $bindable(false) } = $props<{
     id: string;
     label: string;
-    checked?: boolean;
     value?: any;
     group?: any[];
+    checked?: boolean;
   }>();
-
-  // If value is provided, it acts as part of a group array
-  // If not, it acts as a boolean toggle
 </script>
 
-<div class="checkbox-wrapper">
-  {#if value !== undefined}
-    <input type="checkbox" {id} {value} bind:group={group} />
+<label class="check-label" for={id}>
+  {#if group !== undefined}
+    <input type="checkbox" {id} {value} bind:group class="check-input" />
   {:else}
-    <input type="checkbox" {id} bind:checked={checked} />
+    <input type="checkbox" {id} {value} bind:checked class="check-input" />
   {/if}
-  <label for={id}>{label}</label>
-</div>
+  <span class="check-text">{label}</span>
+</label>
 
 <style>
-  .checkbox-wrapper {
-    display: flex;
+  .check-label {
+    display: inline-flex;
     align-items: flex-start;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  input[type="checkbox"] {
-    margin-top: 0.25rem;
-    width: 1rem;
-    height: 1rem;
+    gap: var(--space-3);
     cursor: pointer;
+    margin-bottom: var(--space-2);
+    min-height: 44px;
+    align-items: center;
   }
-  label {
-    font-size: 0.9rem;
+  .check-input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
     cursor: pointer;
-    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .check-input:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .check-text {
+    font-size: 16px;
+    color: var(--text-primary);
   }
 </style>

@@ -13,8 +13,8 @@
   
   <div style="margin-bottom: 1.5rem;">
     <span style="font-weight: 500; display: block; margin-bottom: 0.5rem;">Apakah Anda sedang hamil?</span>
-    <Radio id="hamil_ya" name="hamil" label="Ya, saya sedang hamil" value={true} bind:group={patient.statusKehamilan} />
-    <Radio id="hamil_tidak" name="hamil" label="Tidak" value={false} bind:group={patient.statusKehamilan} />
+    <Radio id="hamil_ya"  label="Ya, saya sedang hamil" value={true} bind:group={patient.statusKehamilan} />
+    <Radio id="hamil_tidak"  label="Tidak" value={false} bind:group={patient.statusKehamilan} />
   </div>
   
   {#if patient.statusKehamilan}

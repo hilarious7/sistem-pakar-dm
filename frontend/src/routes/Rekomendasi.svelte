@@ -20,23 +20,35 @@
 </script>
 
 {#if patient}
-<div class="container" style="padding: 2rem 1rem; max-width: 900px;">
-  <h1 style="margin-bottom: 1.5rem;">Rekomendasi Gizi (TEST DATA)</h1>
+<div class="container container-form py-8">
+  <div class="mb-6 text-center">
+    <h1>Rekomendasi Gizi (TEST DATA)</h1>
+  </div>
   
   <Alert type="warning" title="TEST ONLY - NOT MEDICAL DATA">
     Angka yang ditampilkan di bawah ini adalah DUMMY (placeholder) dan bukan formula medis final.
   </Alert>
   
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <div class="rekomendasi-grid mt-6">
     <BmiCard bmi={dummyBmi} status="Normal" />
     <EnergyCard bmr={dummyBmr} tee={dummyTee} />
     <MealPlanCard carbs="236g - 341g" protein="52g - 183g" fat="46g - 81g" />
   </div>
   
-  <div style="text-align: center;">
+  <div class="mt-8 text-center">
     <Button variant="outline" onclick={() => push('/')}>
       Kembali ke Beranda
     </Button>
   </div>
 </div>
 {/if}
+
+<style>
+  .py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+  .rekomendasi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+</style>

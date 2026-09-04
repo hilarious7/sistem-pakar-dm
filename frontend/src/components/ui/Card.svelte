@@ -1,21 +1,25 @@
-
 <script lang="ts">
-  let { children, class: className = '', padding = '1.5rem' } = $props<{
-    children?: any;
+  let { class: className = "", children } = $props<{
     class?: string;
-    padding?: string;
+    children?: any;
   }>();
 </script>
 
-<div class="card {className}" style="padding: {padding}">
+<div class="card {className}">
   {@render children?.()}
 </div>
 
 <style>
   .card {
     background-color: var(--surface);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 640px) {
+    .card {
+      padding: var(--space-4);
+    }
   }
 </style>

@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { patientStore } from '../stores/patient.store.svelte';
   import { push } from 'svelte-spa-router';
+  
   import Stepper from '../components/ui/Stepper.svelte';
   import Button from '../components/ui/Button.svelte';
   import Card from '../components/ui/Card.svelte';
+  import LoadingState from '../components/feedback/LoadingState.svelte';
   
   import PatientForm from '../components/diagnosis/PatientForm.svelte';
   import PregnancyForm from '../components/diagnosis/PregnancyForm.svelte';
@@ -10,119 +13,111 @@
   import RiskFactorSelector from '../components/diagnosis/RiskFactorSelector.svelte';
   import ReviewInput from '../components/diagnosis/ReviewInput.svelte';
   
-  import { mockSymptoms, mockRiskFactors, mockDiagnosisResult } from '../lib/api/mock';
-  import { patientStore } from '../stores/patient.store.svelte';
-  import { diagnosisStore } from '../stores/diagnosis.store.svelte';
+  import { mockSymptoms, mockRiskFactors } from '../lib/api/mock';
 
   let currentStep = $state(1);
-  let totalSteps = $state(5);
-  let isLoading = $state(false);
-  
-  const stepLabels = ['Data Pasien', 'Kehamilan', 'Gejala', 'Risiko', 'Review'];
-  
-  // Local state form
-  let patient = $state({
-    nama: '',
-    usia: 0,
-    jenisKelamin: 'laki-laki',
-    beratBadan: 0,
-    tinggiBadan: 0,
-    aktivitasFisik: '',
-    statusKehamilan: false,
-    usiaKehamilan: 0
-  });
-  
-  let selectedSymptomIds = $state<number[]>([]);
-  let selectedRiskFactorIds = $state<number[]>([]);
-  
-  $effect(() => {
-    // Dinamis step total jika bukan perempuan
-    if (patient.jenisKelamin !== 'perempuan') {
-      patient.statusKehamilan = false;
-      patient.usiaKehamilan = 0;
-    }
-  });
+  let isSubmitting = $state(false);
+  let selectedGejalaIds = $state<number[]>([]);
+  let selectedFaktorRisikoIds = $state<number[]>([]);
 
-  const nextStep = () => {
-    if (currentStep === 1 && patient.jenisKelamin !== 'perempuan') {
-      currentStep = 3; // Skip pregnancy
-    } else {
-      currentStep++;
-    }
-  };
+  const steps = [
+    { number: 1, label: 'Data Pasien' },
+    { number: 2, label: 'Status Kehamilan' },
+    { number: 3, label: 'Gejala' },
+    { number: 4, label: 'Faktor Risiko' },
+    { number: 5, label: 'Review' }
+  ];
 
-  const prevStep = () => {
-    if (currentStep === 3 && patient.jenisKelamin !== 'perempuan') {
-      currentStep = 1; // Skip pregnancy back
-    } else {
-      currentStep--;
+  function nextStep() {
+    if (patientStore.data) {
+      if (currentStep === 1 && patientStore.data.jenisKelamin !== 'perempuan') {
+        currentStep = 3; // Skip pregnancy
+      } else if (currentStep < 5) {
+        currentStep += 1;
+      }
     }
-  };
+  }
 
-  const submit = () => {
-    isLoading = true;
-    
-    // Simpan ke store
-    patientStore.set(patient as any);
-    
-    // Simulasi API Call
+  function prevStep() {
+    if (patientStore.data) {
+      if (currentStep === 3 && patientStore.data.jenisKelamin !== 'perempuan') {
+        currentStep = 1;
+      } else if (currentStep > 1) {
+        currentStep -= 1;
+      }
+    }
+  }
+
+  async function submitDiagnosis() {
+    isSubmitting = true;
     setTimeout(() => {
-      diagnosisStore.set({
-        konsultasiId: 999,
-        diagnosis: mockDiagnosisResult,
-        warnings: [],
-        komplikasiRiwayat: [],
-        disclaimer: "BUKAN HASIL MEDIS - HANYA TESTING"
-      });
-      isLoading = false;
+      isSubmitting = false;
       push('/hasil');
     }, 1500);
-  };
+  }
 </script>
 
-<div class="container" style="padding: 2rem 1rem; max-width: 800px;">
-  <Stepper {currentStep} {totalSteps} labels={stepLabels} />
-  
-  {#if isLoading}
-    <div style="text-align: center; padding: 4rem 0;">
-      <h3 style="color: var(--primary);">Memproses Data (Simulasi)...</h3>
-      <p style="color: var(--text-muted);">Mohon tunggu sebentar.</p>
+<div class="container container-form py-8">
+  <div class="mb-8">
+    <h1 class="text-center">Konsultasi Diagnosis</h1>
+    <p class="text-center text-muted">Isi data berikut untuk memulai analisis awal.</p>
+  </div>
+
+  {#if isSubmitting}
+    <Card class="text-center py-12">
+      <LoadingState message="Memproses Data (Simulasi)..." />
+    </Card>
+  {:else if patientStore.data}
+    <div class="mb-8">
+      <Stepper {steps} {currentStep} />
     </div>
-  {:else}
+
     <Card>
-      <form onsubmit={(e) => { e.preventDefault(); }}>
-        {#if currentStep === 1}
-          <PatientForm bind:patient />
-        {:else if currentStep === 2}
-          <PregnancyForm bind:patient />
-        {:else if currentStep === 3}
-          <SymptomSelector symptoms={mockSymptoms} bind:selectedIds={selectedSymptomIds} />
-        {:else if currentStep === 4}
-          <RiskFactorSelector riskFactors={mockRiskFactors} bind:selectedIds={selectedRiskFactorIds} />
-        {:else if currentStep === 5}
-          <ReviewInput 
-            {patient} 
-            selectedSymptoms={mockSymptoms.filter(s => selectedSymptomIds.includes(s.id))}
-            selectedRiskFactors={mockRiskFactors.filter(f => selectedRiskFactorIds.includes(f.id))}
-          />
+      {#if currentStep === 1}
+        <PatientForm bind:patient={patientStore.data} />
+      {:else if currentStep === 2}
+        <PregnancyForm bind:patient={patientStore.data} />
+      {:else if currentStep === 3}
+        <SymptomSelector bind:selectedIds={selectedGejalaIds} symptoms={mockSymptoms} />
+      {:else if currentStep === 4}
+        <RiskFactorSelector bind:selectedIds={selectedFaktorRisikoIds} riskFactors={mockRiskFactors} />
+      {:else if currentStep === 5}
+        <ReviewInput 
+          patient={patientStore.data}
+          selectedSymptoms={mockSymptoms.filter(s => selectedGejalaIds.includes(s.id))}
+          selectedRiskFactors={mockRiskFactors.filter(r => selectedFaktorRisikoIds.includes(r.id))}
+        />
+      {/if}
+
+      <div class="actions mt-8">
+        <Button 
+          variant="outline" 
+          onclick={prevStep} 
+          disabled={currentStep === 1}
+        >
+          Kembali
+        </Button>
+
+        {#if currentStep < 5}
+          <Button variant="primary" onclick={nextStep}>Lanjut</Button>
+        {:else}
+          <Button variant="success" onclick={submitDiagnosis}>Proses Diagnosis (Dummy)</Button>
         {/if}
-        
-        <div style="display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-          <Button variant="outline" disabled={currentStep === 1} onclick={prevStep}>
-            Kembali
-          </Button>
-          
-          {#if currentStep === totalSteps}
-            <Button variant="primary" onclick={submit}>
-              Proses Diagnosis (Dummy)
-            </Button>
-          {:else}
-            <Button variant="primary" onclick={nextStep}>
-              Lanjut
-            </Button>
-          {/if}
-        </div>
-      </form>
+      </div>
     </Card>
   {/if}
 </div>
+
+<style>
+  .py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+  .py-12 { padding-top: var(--space-12); padding-bottom: var(--space-12); }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-6);
+  }
+  @media (max-width: 640px) {
+    .actions { flex-direction: column-reverse; gap: var(--space-4); }
+  }
+</style>
